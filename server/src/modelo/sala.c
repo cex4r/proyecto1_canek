@@ -9,24 +9,112 @@
 
 */
 
-int sala() {
+//Constructor y atributos de la clase sala
 
+#include <stdlib.h>
+#include <string.h>
+ #include "sala.h"
 
-    //Regresa el nombre de la sala
-    int getNameRoom() {
+struct Sala {
+    char roomname[MAX_ROOMNAME_LEN];
+    char miembros[MAX_USUARIOS_POR_SALA][MAX_USERNAME_LEN]; 
+    int num_miembros; 
+    
+    char invitados[MAX_USUARIOS_POR_SALA][MAX_USERNAME_LEN]; 
+    int num_invitados; 
+};
+
+Sala *sala_crear(const char *roomname){
+    Sala *sala = malloc(sizeof(Sala)); 
+
+    strcpy(sala->roomname, roomname); 
+    sala->num_miembros = 1;
+    sala->num_invitados = 0; 
+    
+    return sala;
+}
+
+void *sala_destruir(Sala *sala){
+    free(sala); 
+}
+
+const char *sala_obtener_nombre(const Sala *sala){
+    return sala->roomname; 
+}
+
+//Funciones con la lista de miembros de la sala
+
+int sala_tiene_miembro(const Sala *sala, const char *username){
+
+    for(int i = 0; i < sala->num_miembros; i++){
+        if(strcmp(sala->miembros[i], username) == 0){
+            return 1; 
+        }
+    }
+    return 0; 
+}
+
+int sala_agregar_miembro(Sala *sala, const char*username){
+    
+    if(sala_tiene_miembro(sala, username)){
         return 0; 
     }
+    strcpy(sala->miembros[sala->num_miembros], username); 
+    sala->num_miembros++; 
+    return 1; 
+}
 
-    //Regresa el set de miembros que estan en la sala
-    int getMiembros() {
-        return 0; 
+int sala_quitar_miembro(Sala *sala, const char *username){
+    
+    for(int i = 0; i < sala->num_miembros; i++){
+        if(strcmp(sala->miembros[i], username) == 0){
+            strcpy(sala->miembros[i], sala->miembros[sala->num_miembros - 1]); 
+            sala->num_miembros--; 
+            return 1; 
+        }
     }
-
-    //Regresa los miembros que han sido invitados pero no se han unido
-    int getMiembrosInvitados() {
-        return 0; 
-    }
-
-
+    return 0;
 
 }
+
+int sala_num_miembros(const Sala *sala){
+    return sala->num_miembros; 
+}
+
+const char *sala_obtener_miembro(const Sala *sala, int indice){
+    return sala->miembros[indice]; 
+}
+
+
+int sala_esta_vacia(const Sala *sala){
+    return sala->num_miembros==0; 
+}
+
+//Usuarios invitados pero que no se han unido
+
+int sala_tiene_invitado(const Sala *sala, const char *username){
+    for (int i = 0; i < sala->num_invitados; i++) {
+        if (strcmp(sala->invitados[i], username) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int sala_agregar_invitado(Sala *sala, const char *username){
+    strcpy(sala->miembros[sala->num_miembros], username); 
+    return 1; 
+}
+
+int sala_quitar_invitado(Sala *sala, const char *username){
+     for (int i = 0; i < sala->num_invitados; i++) {
+        if (strcmp(sala->invitados[i], username) == 0) {
+            strcpy(sala->invitados[i], sala->invitados[sala->num_invitados - 1]);
+            sala->num_invitados--;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
