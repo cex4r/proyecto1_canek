@@ -13,7 +13,7 @@
 
 #include <stdlib.h>
 #include <string.h>
- #include "sala.h"
+#include "sala.h"
 
 struct Sala {
     char roomname[MAX_ROOMNAME_LEN];
