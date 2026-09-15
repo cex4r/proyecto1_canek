@@ -34,7 +34,7 @@ Sala *sala_crear(const char *roomname){
     return sala;
 }
 
-void *sala_destruir(Sala *sala){
+void sala_destruir(Sala *sala){
     free(sala); 
 }
 
