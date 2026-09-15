@@ -17,7 +17,7 @@ Usuario *servidor_buscar_usuario(Servidor *servidor, const char *username);
 Usuario *servidor_registrar_usuario(Servidor *servidor, const char *username, int socket_fd);
 void servidor_eliminar_usuario(Servidor *servidor, const char *username);
 int servidor_num_usuarios(Servidor *servidor);
-Usuario *servidor_obtener_usuario_por_indice(Servidor *servidor, int indice);
+Usuario *servidor_obtener_usuario_por_indice(Servidor *servidor, int indice); 
 
 //Metodos que usan a las salas 
 Sala *servidor_buscar_sala(Servidor *servidor, const char *roomname);
