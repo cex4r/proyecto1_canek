@@ -22,15 +22,18 @@ servidor_exe = executable('servidor',
 )
 
 # --- Unit tests ---
+
+#test de la clase usuario
 test_usuario_exe = executable('test_usuario',
   'tests/test_usuario.c',
   model_sources,
   include_directories: inc,
   dependencies: [thread_dep, cmocka_dep],
 )
-
 test('usuario', test_usuario_exe)
 
+
+#test de la clase sala 
 test_sala_exe = executable('test_sala',
   'tests/test_sala.c',
   model_sources,
@@ -38,3 +41,12 @@ test_sala_exe = executable('test_sala',
   dependencies: [thread_dep, cmocka_dep],
 )
 test('sala', test_sala_exe)
+
+#test de la clase servidor 
+test_servidor_exe = executable('test_servidor',
+  'tests/test_servidor.c',
+  model_sources,
+  include_directories: inc, 
+  dependencies: [thread_dep, cmocka_dep],
+)
+test('servidor', test_servidor_exe)
