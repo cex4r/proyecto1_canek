@@ -30,3 +30,11 @@ test_usuario_exe = executable('test_usuario',
 )
 
 test('usuario', test_usuario_exe)
+
+test_sala_exe = executable('test_sala',
+  'tests/test_sala.c',
+  model_sources,
+  include_directories: inc,
+  dependencies: [thread_dep, cmocka_dep],
+)
+test('sala', test_sala_exe)
