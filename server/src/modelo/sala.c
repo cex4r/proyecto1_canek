@@ -25,10 +25,19 @@ struct Sala {
 };
 
 Sala *sala_crear(const char *roomname){
+
+    if(roomname == NULL || strlen(roomname) == 0 || strlen(roomname) > MAX_ROOMNAME_LEN ){
+        return NULL; 
+    }
+
     Sala *sala = malloc(sizeof(Sala)); 
 
+    if(sala == NULL){
+        return NULL; // si pasa eso nos quedamos sin memoria pa 
+    }
+
     strcpy(sala->roomname, roomname); 
-    sala->num_miembros = 1;
+    sala->num_miembros = 0;
     sala->num_invitados = 0; 
     
     return sala;
@@ -82,6 +91,11 @@ int sala_num_miembros(const Sala *sala){
 }
 
 const char *sala_obtener_miembro(const Sala *sala, int indice){
+
+    if (indice < 0 || indice >= sala->num_miembros) {
+        return NULL;
+    }
+
     return sala->miembros[indice]; 
 }
 
@@ -102,8 +116,15 @@ int sala_tiene_invitado(const Sala *sala, const char *username){
 }
 
 int sala_agregar_invitado(Sala *sala, const char *username){
-    strcpy(sala->miembros[sala->num_miembros], username); 
-    return 1; 
+    if (sala_tiene_invitado(sala, username)) {
+        return 0;
+    }
+    if (sala->num_invitados >= MAX_USUARIOS_POR_SALA) {
+        return 0;
+    }
+    strcpy(sala->invitados[sala->num_invitados], username);
+    sala->num_invitados++;
+    return 1;
 }
 
 int sala_quitar_invitado(Sala *sala, const char *username){

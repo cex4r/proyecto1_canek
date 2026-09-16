@@ -42,7 +42,7 @@ static void test_sala_nombre_valido(void **state){
 
 static void test_sala_tiene_miembro(void **state){
     Sala *s = sala_crear("Sala"); 
-    assert_null( sala_obtener_miembro(s, 10)); 
+    assert_null(sala_obtener_miembro(s, 10)); 
 
     sala_destruir(s); 
 
