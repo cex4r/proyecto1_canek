@@ -15,6 +15,7 @@
 #include <string.h>
 #include "usuario.h"
 
+
 /*
     Aqui estoy definiendo las propiedades del usuario
     almaceno el nombre del usuario, el estado del usario, el puerto/socket 
@@ -24,7 +25,7 @@
 */
 
 struct Usuario {
-    char username[MAX_USERNAME_LEN]; 
+    char username[MAX_USERNAME_LEN + 1]; 
     char status[8]; 
     int socket; 
 
@@ -41,10 +42,19 @@ struct Usuario {
 
 Usuario *usuario_crear(const char *username, int socket_fd){
 
+    if(username == NULL || strlen(username) == 0 || strlen(username) > MAX_USERNAME_LEN){
+        return NULL; 
+    }
+
     Usuario *usuario = malloc(sizeof(Usuario)); 
+
+    if(usuario == NULL){
+        return NULL; //nos quedamos sin memoria pa 
+    }
 
     strcpy(usuario->username, username);
     strcpy(usuario->status,"ACTIVE"); 
+    
     usuario->socket = socket_fd;  
     usuario->num_invitaciones = 0; 
     usuario->num_salas_unidas = 0; 
@@ -68,6 +78,13 @@ const char *usuario_obtener_status(const Usuario *usuario){
 }
 
 int usuario_poner_status(Usuario *usuario, const char *status){
+
+    if(strcmp(status, "AWAY") != 0 
+    && strcmp(status, "BUSY") != 0
+    && strcmp(status, "ACTIVE") != 0){
+            return 0; 
+        }
+
     strcpy(usuario->status, status); 
     return 1; 
 }
@@ -78,7 +95,7 @@ int usuario_obtener_socket(const Usuario *usuario){
 
 
 //Salas en las que ha estado el usuario
-
+//Mejorando estas cosas con un hashMap xd
 int usuario_esta_unido_a_sala(const Usuario *usuario, const char *roomname){
     for(int i = 0; i < usuario->num_salas_unidas; i++){
         if(strcmp(usuario->salas_unidas[i], roomname) == 0) {
@@ -89,6 +106,14 @@ int usuario_esta_unido_a_sala(const Usuario *usuario, const char *roomname){
 }
 
 int usuario_unir_a_sala(Usuario *usuario, const char *roomname){
+
+    if(usuario_esta_unido_a_sala(usuario, roomname) == 1){
+        return 0; 
+    }
+         
+    if(usuario->num_salas_unidas >= MAX_SALAS_POR_USUARIO){
+        return 0; 
+    }
 
     strcpy(usuario->salas_unidas[usuario->num_salas_unidas], roomname); 
     usuario->num_salas_unidas++;

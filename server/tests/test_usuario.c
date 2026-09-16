@@ -8,10 +8,10 @@
 static void test_usuario_nuevo_esta_activo(void **state) {
     (void) state; 
     //vemos que el usuario se crea correctamente; 
-    Usuario *u = usuario_crear("Kimberly", 42); 
+    Usuario *u = usuario_crear("Kimberly",42); 
     assert_non_null(u);
-    assert_string_equal(usuario_obtener_username(u), "Kimberly"); 
-    assert_string_equal(usuario_obtener_status(u), "ACTIVE"); 
+    assert_string_equal(usuario_obtener_username(u),"Kimberly"); 
+    assert_string_equal(usuario_obtener_status(u),"ACTIVE"); 
     
     usuario_destruir(u); //siempre tenemos que limpiar lo que creamos lo acabo de aprender :,v
     
