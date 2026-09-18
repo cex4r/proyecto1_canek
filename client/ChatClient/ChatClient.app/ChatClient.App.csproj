@@ -1,0 +1,14 @@
+ <Project Sdk = "Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!-- diciendo que la salida generara un ejecutable -->
+        <OutputType>Exe</OutputType>
+
+        <!-- especificando que version del framework .not voy a usatr -->
+        <TargetFramework>net8.0</TargetFramework>
+
+        <!-- permitiedo usar sintazxis moderna de  C#, cosa que vi en un tutorial XD-->
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+</Project>
