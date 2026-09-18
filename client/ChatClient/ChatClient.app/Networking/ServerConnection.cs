@@ -1,41 +1,62 @@
 /*
-    lo que va a hacer esta clase es envolveer el socket, para no tener el codigo
-    en el Program.cs
-
-    Va a tener metdos como conectar, enviarMensaje, LeerRespuesta, Desconectar
-
+    esta clase matiene limpio el Program.cs.
+    da metodos como Conectar, EnviarMensaje, LeerRespuesta y Desconectar
 */
 
-class ServerConnection
+using System;
+using System.Net.Sockets;
+using System.Text;
+
+namespace ChatClient.App.Networking;
+
+public class ServerConnection
 {
-    private TcpCLient? _cliente; 
+    private TcpClient? _cliente; 
     private NetworkStream? _flujo; 
 
-
-    public void conectar(string host, int puerto)
+    // crea un cliente y establece la conexión con el servidor
+    public void Conectar(string host, int puerto)
     {
-        
+        _cliente = new TcpClient(); 
+        _cliente.Connect(host, puerto);
+        _flujo = _cliente.GetStream();  
     }
 
-    public void enviarMensaje(string mensaje)
+    // envia un mensaje convirtiendolo a bytes con codificación utf-8
+    public void EnviarMensaje(string mensaje)
     {
+        if (_flujo == null)
+        {
+            throw new InvalidOperationException("no hay conexión  con el servidor");
+        }
+
         
+        byte[] bytes = Encoding.UTF8.GetBytes(mensaje);
+        _flujo.Write(bytes, 0, bytes.Length); 
     }
 
+    
     public string LeerRespuesta()
     {
-        
+        if (_flujo == null)
+        {
+            throw new InvalidOperationException("no hay conexión con el servidor");
+        }
+
+        byte[] buffer = new byte[1024]; 
+        int bytesLeidos = _flujo.Read(buffer, 0, buffer.Length); 
+
+        if (bytesLeidos == 0)
+        {
+            return string.Empty; 
+        }
+
+        return Encoding.UTF8.GetString(buffer, 0, bytesLeidos);
     }
 
     public void Desconectar()
     {
-        
+        _flujo?.Close(); 
+        _cliente?.Close(); 
     }
-
-
-
-
-
-
-
 }
