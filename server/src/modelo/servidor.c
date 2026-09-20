@@ -82,6 +82,10 @@ void servidor_eliminar_usuario(Servidor *servidor, const char *username){
     pthread_mutex_unlock(&servidor->lock);
 }
 
+int servidor_num_salas(const Servidor *servidor) {
+    return servidor->num_salas; 
+}
+
 int servidor_num_usuarios(Servidor *servidor){
     pthread_mutex_lock(&servidor->lock);
     int n = servidor->num_usuarios;

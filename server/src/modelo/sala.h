@@ -8,7 +8,7 @@
 typedef struct Sala Sala; 
 
 Sala *sala_crear(const char *roomname); 
-void *sala_destruir(Sala *sala);
+void sala_destruir(Sala *sala);
 
 const char *sala_obtener_nombre(const Sala *sala);
 

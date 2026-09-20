@@ -3,6 +3,7 @@ project('multichat_server', 'c',
 
 thread_dep = dependency('threads')
 cmocka_dep = dependency('cmocka')
+cjson_dep  = dependency('libcjson')
 
 # Dejando que el main executable y los tests encuentren los headers
 inc = include_directories('src')
@@ -13,40 +14,43 @@ model_sources = files(
   'src/modelo/servidor.c',
 )
 
+json_sources = files(
+  'src/json/mensaje_json.c',
+)
+
 # --- Main server executable ---
 servidor_exe = executable('servidor',
   'src/main.c',
   model_sources,
   include_directories: inc,
-  dependencies: thread_dep,
+  dependencies: [thread_dep, cjson_dep],
 )
 
 # --- Unit tests ---
 
-#test de la clase usuario
+# test de la clase usuario
 test_usuario_exe = executable('test_usuario',
   'tests/test_usuario.c',
   model_sources,
   include_directories: inc,
-  dependencies: [thread_dep, cmocka_dep],
+  dependencies: [thread_dep, cmocka_dep, cjson_dep],
 )
 test('usuario', test_usuario_exe)
 
-
-#test de la clase sala 
+# test de la clase sala 
 test_sala_exe = executable('test_sala',
   'tests/test_sala.c',
   model_sources,
   include_directories: inc,
-  dependencies: [thread_dep, cmocka_dep],
+  dependencies: [thread_dep, cmocka_dep, cjson_dep],
 )
 test('sala', test_sala_exe)
 
-#test de la clase servidor 
+# test de la clase servidor 
 test_servidor_exe = executable('test_servidor',
   'tests/test_servidor.c',
   model_sources,
   include_directories: inc, 
-  dependencies: [thread_dep, cmocka_dep],
+  dependencies: [thread_dep, cmocka_dep, cjson_dep],
 )
 test('servidor', test_servidor_exe)
