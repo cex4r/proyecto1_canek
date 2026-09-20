@@ -18,6 +18,10 @@ json_sources = files(
   'src/json/mensaje_json.c',
 )
 
+controlador_sources = files(
+  'src/controlador/buffer_lineas.c',
+)
+
 # --- Main server executable ---
 servidor_exe = executable('servidor',
   'src/main.c',
