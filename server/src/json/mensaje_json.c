@@ -2,13 +2,13 @@
 #include <string.h>
 #include "mensaje_json.h"
 
-cJSON *mensaje_parsear(const char *linea){
-    cJSON *raiz = c cJSON_Parse(linea);
-    if(raiz == NULL){
-        return NULL; //json invalido 
+cJSON *mensaje_parsear(const char *linea) {
+    cJSON *raiz = cJSON_Parse(linea);
+    if (raiz == NULL) {
+        return NULL; // json invalido 
     }
 
-    if(!cJSON_IsObject(raiz)) {
+    if (!cJSON_IsObject(raiz)) {
         cJSON_Delete(raiz);
         return NULL; 
     }
@@ -16,23 +16,23 @@ cJSON *mensaje_parsear(const char *linea){
 }
 
 const char *mensaje_obtener_tipo(const cJSON *mensaje) {
-    return mensaje_obtener_campo_string(mesaje, "type");
+    return mensaje_obtener_campo_string(mensaje, "type");
 }
 
 const char *mensaje_obtener_campo_string(const cJSON *mensaje, const char *campo) {
-    if( mensaje == NULL) {
+    if (mensaje == NULL) {
         return NULL; 
     }
 
     cJSON *item = cJSON_GetObjectItemCaseSensitive(mensaje, campo);
-    if(item == NULL || !cJSON_IsString(item)) {
+    if (item == NULL || !cJSON_IsString(item)) {
         return NULL; 
     }
     return item->valuestring;
 }
 
 void mensaje_liberar(cJSON *mensaje) {
-    cJSON_Delete(mensaje) //acepta null sin pedos 
+    cJSON_Delete(mensaje); // acepta null sin pedos 
 }
 
 /*
@@ -42,20 +42,20 @@ void mensaje_liberar(cJSON *mensaje) {
 */
 
 static char *serializar_y_liberar(cJSON *objeto) {
-    if(objeto == NULL){
+    if (objeto == NULL) {
         return NULL; 
     }
 
     char *sin_salto = cJSON_PrintUnformatted(objeto); 
     cJSON_Delete(objeto);
 
-    if(sin_salto == NULL){
+    if (sin_salto == NULL) {
         return NULL; 
     }
 
     size_t longitud = strlen(sin_salto); 
     char *resultado = malloc(longitud + 2); 
-    if(resultado == NULL){
+    if (resultado == NULL) {
         cJSON_free(sin_salto);
         return NULL; 
     }
@@ -65,12 +65,11 @@ static char *serializar_y_liberar(cJSON *objeto) {
 
     cJSON_free(sin_salto);
     return resultado; 
-
 }
 
-char *mensaje_construir_respuesta(const char *operacion, const char *resultado, const char *extra){
+char *mensaje_construir_respuesta(const char *operacion, const char *resultado, const char *extra) {
     cJSON *objeto = cJSON_CreateObject(); 
-    if(objeto == NULL) {
+    if (objeto == NULL) {
         return NULL; 
     }
 
@@ -111,4 +110,3 @@ char *mensaje_construir_new_user(const char *username) {
  
     return serializar_y_liberar(objeto);
 }
- 

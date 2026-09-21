@@ -2,14 +2,14 @@
 #include <string.h>
 #include "buffer_lineas.h"
 
-struct BuuferLineas {
+struct BufferLineas {
     char datos[BUFFER_LINEAS_CAPACIDAD];
-    int longitud; //los bytres que son vlaidos ahora mismo 
+    int longitud; // los bytes que son validos ahora mismo 
 };
 
-BufferLineas *bufferr_lineas_crear(void) {
+BufferLineas *buffer_lineas_crear(void) {
     BufferLineas *buffer = malloc(sizeof(BufferLineas));
-    if(buffer == NULL){
+    if (buffer == NULL) {
         return NULL; 
     }
     buffer->longitud = 0; 
@@ -20,23 +20,23 @@ void buffer_lineas_destruir(BufferLineas *buffer) {
     free(buffer);
 }
 
-int buffer_lineas_agregar_datos(BufferLineas *buffer, const char *datos, int longitud){
-    if(buffer->longitud + longitud > BUFFER_LINEAS_CAPACIDAD){
-        return 0; //mensaje muy larg
+int buffer_lineas_agregar_datos(BufferLineas *buffer, const char *datos, int longitud) {
+    if (buffer->longitud + longitud > BUFFER_LINEAS_CAPACIDAD) {
+        return 0; // mensaje muy largo
     }
     memcpy(buffer->datos + buffer->longitud, datos, longitud);
-    buffer-> longitud += longitud; 
+    buffer->longitud += longitud; 
     return 1; 
 }
 
 static void consumir_bytes(BufferLineas *buffer, int cantidad) {
-    memmove(buffer->datos , buffer->datos + cantidad, buffer->longitud - cantidad);
+    memmove(buffer->datos, buffer->datos + cantidad, buffer->longitud - cantidad);
     buffer->longitud -= cantidad; 
 }
 
 int buffer_lineas_obtener_siguiente(BufferLineas *buffer, char *linea, int tam_max) {
     while (1) {
-        /* Bbsca el primer \n dentro de lo que ya tenemos acumulado */
+        /* Busca el primer \n dentro de lo que ya tenemos acumulado */
         int indice_salto = -1;
         for (int i = 0; i < buffer->longitud; i++) {
             if (buffer->datos[i] == '\n') {

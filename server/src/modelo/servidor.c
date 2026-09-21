@@ -142,3 +142,20 @@ void servidor_eliminar_sala(Servidor *servidor, const char *roomname) {
     pthread_mutex_unlock(&servidor->lock);
 }
 
+int servidor_obtener_sockets_excepto(Servidor *servidor, int socket_excluido,int *sockets_salida, int max_sockets) {
+    
+    pthread_mutex_lock(&servidor->lock);
+ 
+    int contador = 0;
+    for (int i = 0; i < servidor->num_usuarios && contador < max_sockets; i++) {
+        int socket_actual = usuario_obtener_socket(servidor->usuarios[i]);
+        if (socket_actual != socket_excluido) {
+            sockets_salida[contador] = socket_actual;
+            contador++;
+        }
+    }
+ 
+    pthread_mutex_unlock(&servidor->lock);
+    return contador;
+}
+

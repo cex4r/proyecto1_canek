@@ -20,12 +20,20 @@ json_sources = files(
 
 controlador_sources = files(
   'src/controlador/buffer_lineas.c',
+  'src/controlador/cliente_handler.c',
 )
+
+# Agrupamos todas las fuentes del servidor para no repetirlas
+all_sources = [
+  'src/main.c',
+  model_sources,
+  json_sources,
+  controlador_sources,
+]
 
 # --- Main server executable ---
 servidor_exe = executable('servidor',
-  'src/main.c',
-  model_sources,
+  all_sources,  
   include_directories: inc,
   dependencies: [thread_dep, cjson_dep],
 )
@@ -36,6 +44,8 @@ servidor_exe = executable('servidor',
 test_usuario_exe = executable('test_usuario',
   'tests/test_usuario.c',
   model_sources,
+  json_sources,
+  controlador_sources,
   include_directories: inc,
   dependencies: [thread_dep, cmocka_dep, cjson_dep],
 )
@@ -45,6 +55,8 @@ test('usuario', test_usuario_exe)
 test_sala_exe = executable('test_sala',
   'tests/test_sala.c',
   model_sources,
+  json_sources,
+  controlador_sources,
   include_directories: inc,
   dependencies: [thread_dep, cmocka_dep, cjson_dep],
 )
@@ -54,6 +66,8 @@ test('sala', test_sala_exe)
 test_servidor_exe = executable('test_servidor',
   'tests/test_servidor.c',
   model_sources,
+  json_sources,
+  controlador_sources,
   include_directories: inc, 
   dependencies: [thread_dep, cmocka_dep, cjson_dep],
 )

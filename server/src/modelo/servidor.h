@@ -25,7 +25,8 @@ Sala *servidor_buscar_sala(Servidor *servidor, const char *roomname);
 Sala *servidor_registrar_sala(Servidor *servidor, const char *roomname);
 void servidor_eliminar_sala(Servidor *servidor, const char *roomname);
 
-
+int servidor_obtener_sockets_excepto(Servidor *servidor, int socket_excluido,
+                                      int *sockets_salida, int max_sockets);
 
 
 #endif // Servidor_H
