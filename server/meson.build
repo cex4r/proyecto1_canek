@@ -72,3 +72,14 @@ test_servidor_exe = executable('test_servidor',
   dependencies: [thread_dep, cmocka_dep, cjson_dep],
 )
 test('servidor', test_servidor_exe)
+
+# test _mensaje_cjson
+test_mensaje_cjson_exe = executable('test_mensaje_cjson',
+  'tests/test_mensaje_cjson.c',
+  model_sources,
+  json_sources,
+  controlador_sources,
+  include_directories: inc, 
+  dependencies: [thread_dep, cmocka_dep, cjson_dep],
+)
+test('mensaje_json', test_mensaje_cjson_exe)
