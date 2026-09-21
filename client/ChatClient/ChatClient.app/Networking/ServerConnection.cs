@@ -1,62 +1,100 @@
-/*
-    esta clase matiene limpio el Program.cs.
-    da metodos como Conectar, EnviarMensaje, LeerRespuesta y Desconectar
-*/
 
 using System;
 using System.Net.Sockets;
 using System.Text;
-
-namespace ChatClient.App.Networking;
-
-public class ServerConnection
+ 
+namespace ChatClient.App.Networking
 {
-    private TcpClient? _cliente; 
-    private NetworkStream? _flujo; 
-
-    // crea un cliente y establece la conexión con el servidor
-    public void Conectar(string host, int puerto)
+    /// <summary>
+    /// Envuelve la conexión TCP con el servidor. Ahora que hablamos
+    /// el protocolo real, lee y escribe por LÍNEAS completas
+    /// (delimitadas por '\n'), en vez de bytes crudos como en el
+    /// milestone bare-bones — StreamReader/StreamWriter hacen del
+    /// lado del cliente el mismo trabajo que BufferLineas hace a
+    /// mano del lado del servidor en C.
+    /// </summary>
+    public class ServerConnection
     {
-        _cliente = new TcpClient(); 
-        _cliente.Connect(host, puerto);
-        _flujo = _cliente.GetStream();  
-    }
-
-    // envia un mensaje convirtiendolo a bytes con codificación utf-8
-    public void EnviarMensaje(string mensaje)
-    {
-        if (_flujo == null)
+        private TcpClient? _cliente;
+        private NetworkStream? _flujo;
+        private StreamReader? _lector;
+        private StreamWriter? _escritor;
+ 
+        /// <summary>
+        /// Abre la conexión TCP contra el servidor y prepara los
+        /// lectores/escritores de línea sobre el mismo stream.
+        /// </summary>
+        public void Conectar(string host, int puerto)
         {
-            throw new InvalidOperationException("no hay conexión  con el servidor");
+            _cliente = new TcpClient();
+            _cliente.Connect(host, puerto);
+            _flujo = _cliente.GetStream();
+ 
+            /* UTF8Encoding(false) = sin BOM (Byte Order Mark): el
+               protocolo no espera esos bytes extra al inicio.
+ 
+               leaveOpen: true en AMBOS es importante — _lector y
+               _escritor envuelven el MISMO stream. Sin leaveOpen,
+               el primero que se cierre (Dispose) cerraría también
+               el NetworkStream de abajo, y el segundo Dispose
+               fallaría o sería inútil. Cerramos el stream nosotros
+               mismos, explícitamente, en Desconectar(). */
+            var utf8SinBom = new UTF8Encoding(false);
+ 
+            _lector = new StreamReader(
+                _flujo, utf8SinBom, detectEncodingFromByteOrderMarks: false,
+                bufferSize: 1024, leaveOpen: true);
+ 
+            _escritor = new StreamWriter(_flujo, utf8SinBom, bufferSize: 1024, leaveOpen: true)
+            {
+                AutoFlush = true, // cada WriteLine se manda de inmediato, sin esperar a llenar el buffer
+                NewLine = "\n",   // el protocolo exige '\n' — el default de .NET en Windows sería "\r\n"
+            };
         }
-
-        
-        byte[] bytes = Encoding.UTF8.GetBytes(mensaje);
-        _flujo.Write(bytes, 0, bytes.Length); 
-    }
-
-    
-    public string LeerRespuesta()
-    {
-        if (_flujo == null)
+ 
+        /// <summary>
+        /// Manda 'mensajeJson' seguido de '\n'. El texto NO debe
+        /// traer el '\n' incluido — WriteLine ya lo agrega (usando
+        /// el NewLine="\n" configurado arriba).
+        /// </summary>
+        public void EnviarMensaje(string mensajeJson)
         {
-            throw new InvalidOperationException("no hay conexión con el servidor");
+            if (_escritor == null)
+            {
+                throw new InvalidOperationException(
+                    "No hay conexión activa. Llama a Conectar primero.");
+            }
+ 
+            _escritor.WriteLine(mensajeJson);
         }
-
-        byte[] buffer = new byte[1024]; 
-        int bytesLeidos = _flujo.Read(buffer, 0, buffer.Length); 
-
-        if (bytesLeidos == 0)
+ 
+        /// <summary>
+        /// Bloquea hasta recibir una línea completa (sin el '\n').
+        /// Devuelve null si el servidor cerró la conexión — esa es
+        /// la convención de StreamReader.ReadLine(), distinta de
+        /// como lo manejábamos con NetworkStream.Read() crudo (que
+        /// devolvía 0 bytes en vez de null).
+        /// </summary>
+        public string? LeerLinea()
         {
-            return string.Empty; 
+            if (_lector == null)
+            {
+                throw new InvalidOperationException(
+                    "No hay conexión activa. Llama a Conectar primero.");
+            }
+ 
+            return _lector.ReadLine();
         }
-
-        return Encoding.UTF8.GetString(buffer, 0, bytesLeidos);
-    }
-
-    public void Desconectar()
-    {
-        _flujo?.Close(); 
-        _cliente?.Close(); 
+ 
+        /// <summary>
+        /// Cierra lector, escritor, stream y socket, en ese orden.
+        /// </summary>
+        public void Desconectar()
+        {
+            _lector?.Dispose();
+            _escritor?.Dispose();
+            _flujo?.Close();
+            _cliente?.Close();
+        }
     }
 }
