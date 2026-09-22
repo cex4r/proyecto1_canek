@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Chat.Comun;
+namespace chatComun;
 
 /*
     punto unico donde se configura ystem.Text.Json:
