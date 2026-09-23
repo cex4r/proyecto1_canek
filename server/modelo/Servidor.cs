@@ -1,5 +1,5 @@
 using System.Collections.Concurrent; 
-using Chat.comun; 
+using chatComun; 
 
 namespace server.modelo; 
 
@@ -42,7 +42,7 @@ public ResultadoOperacion Identificar(Usuario usuario)
     {
         lock (_lock)
         {
-            if(_usuarios.ContainsKey(usuario.nombre))
+            if(_usuarios.ContainsKey(usuario.Nombre))
                 return new ResultadoOperacion("USER_ALREADY_EXISTS", usuario.Nombre);
 
             _usuarios[usuario.Nombre] = usuario; 
@@ -188,7 +188,7 @@ public ResultadoOperacion Identificar(Usuario usuario)
     // ---------------------------------------------------------------
 
 
-    public ResultadoOperacion UnirseSala(Usuario usuario, string nombreSala)
+    public ResultadoOperacion UnirseASala(Usuario usuario, string nombreSala)
     {
         lock (_lock)
         {

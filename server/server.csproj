@@ -5,12 +5,12 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <RootNamespace>ChatServer</RootNamespace>
+    <RootNamespace>server</RootNamespace>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Chat.Comun\Chat.Comun.csproj" />
+    <ProjectReference Include="..\chatComun\Chat.Comun.csproj" />
   </ItemGroup>
 
 </Project>

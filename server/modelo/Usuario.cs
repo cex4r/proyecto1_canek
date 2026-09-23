@@ -1,38 +1,37 @@
-using System.Net.Sockets; 
-using System.Text; 
-using Chat.comun; 
+using System.Net.Sockets;
+using System.Text;
+using chatComun;
 
 namespace server.modelo;
 
-/*
-    Representa a un usuario identificado en el chat, guarda conexion de socket y expone un metodo para
-    escribirle mensajes, ya que distintos hilos pueden hacer cosas mañosas.
-*/
-
+/// <summary>
+/// Representa a un usuario identificado en el chat. Guarda la conexión de
+/// socket subyacente y expone un método seguro para escribirle mensajes,
+/// ya que distintos hilos (el propio hilo del cliente y los hilos de otros
+/// clientes que quieran notificarle algo) pueden escribirle al mismo tiempo.
+/// </summary>
 public class Usuario
 {
-    //variables para que sea solo de lectura y podamos mandar y recibir cosas del servidor
-    private readonly NerworkStream _stream; 
-    private readonly object _escrituraLock = new(); 
+    private readonly NetworkStream _stream;
+    private readonly object _escrituraLock = new();
 
-    private string Nombre { get; }
+    public string Nombre { get; }
+    public EstadoUsuario Estado { get; set; } = EstadoUsuario.ACTIVE;
 
-    //donde vamos a almacenar donde se ha unido el usuario
-    public HashSet<string> SalasUnidas { get; } = new(); 
+    /// <summary>Nombres de las salas a las que el usuario se ha unido.</summary>
+    public HashSet<string> SalasUnidas { get; } = new();
 
-    //constructor de la clase usuario 
     public Usuario(string nombre, NetworkStream stream)
     {
-        Nombre = nombre; 
+        Nombre = nombre;
         _stream = stream;
     }
 
-    /*
-        Envia una linea, (mensaje Json ya serializado) al cliente de ese usuario
-        agregando el salto de linea delimitador, es seguro para llamare concurrentemente desde 
-        varios ghilos.
-    */
-
+    /// <summary>
+    /// Envía una línea (mensaje JSON ya serializado) al cliente de este
+    /// usuario, agregando el salto de línea delimitador. Es seguro para
+    /// llamarse concurrentemente desde varios hilos.
+    /// </summary>
     public void Enviar(string mensajeJson)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(mensajeJson + "\n");
@@ -42,16 +41,14 @@ public class Usuario
             {
                 _stream.Write(bytes, 0, bytes.Length);
                 _stream.Flush();
-                
             }
             catch (IOException)
             {
-                //en este punto el socket ya se cerro,el hilo dueño de esa conexion se
-                //encargara de limpiar el estado del usuario
+                // El socket ya se cerró; el hilo dueño de esta conexión se
+                // encargará de limpiar el estado del usuario.
             }
             catch (ObjectDisposedException)
             {
-                
             }
         }
     }

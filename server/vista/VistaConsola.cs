@@ -1,4 +1,4 @@
-namespace modelo.vista;
+namespace server.vista;
 /*
 
     Simplemente muestra las conexiones y desconexiones de cada usuario en la consola
