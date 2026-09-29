@@ -1,0 +1,62 @@
+\relax 
+\providecommand\babel@aux[2]{}
+\@nameuse{bbl@beforestart}
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
+\HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldnewlabel\newlabel
+\gdef\newlabel#1#2{\newlabelxx{#1}#2}
+\gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
+\AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\newlabel\oldnewlabel
+\fi}
+\fi}
+\global\let\hyper@last\relax 
+\gdef\HyperFirstAtBeginDocument#1{#1}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\babel@aux{spanish}{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Resumen}{2}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Introducción}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Análisis y diseño}{3}{section.3}\protected@file@percent }
+\gdef \LT@i {\LT@entry 
+    {1}{65.75095pt}\LT@entry 
+    {1}{108.73918pt}\LT@entry 
+    {1}{134.34692pt}\LT@entry 
+    {1}{128.34692pt}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}El protocolo como punto de partida}{4}{subsection.3.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{Mensajes del protocolo y su efecto, tal como los define el documento proporcionado por el profesor. Esta tabla es, en esencia, la especificación de la que se derivó la interfaz pública de la clase \texttt  {Servidor}.}}{4}{table.1}\protected@file@percent }
+\newlabel{tab:protocolo}{{1}{4}{Mensajes del protocolo y su efecto, tal como los define el documento proporcionado por el profesor. Esta tabla es, en esencia, la especificación de la que se derivó la interfaz pública de la clase \texttt {Servidor}}{table.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Decisiones de arquitectura y alternativas consideradas}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Cliente-servidor con un hilo por conexión.}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Un único candado global en el servidor.}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{MVC en ambos programas.}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\texttt  {System.Text.Json}.}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Primera iteración: la versión en C}{6}{subsection.3.3}\protected@file@percent }
+\newlabel{sec:primera-iteracion}{{3.3}{6}{Primera iteración: la versión en C}{subsection.3.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Diseño original de la primera iteración (en C). En rojo, los dos puntos que el propio proceso de desarrollo identificó como errores de diseño: \texttt  {Sala} concebida como un mini-servidor redundante, y \texttt  {conexionHandler} mezclando responsabilidades de Controlador y de Modelo.}}{7}{figure.1}\protected@file@percent }
+\newlabel{fig:diagrama-c}{{1}{7}{Diseño original de la primera iteración (en C). En rojo, los dos puntos que el propio proceso de desarrollo identificó como errores de diseño: \texttt {Sala} concebida como un mini-servidor redundante, y \texttt {conexionHandler} mezclando responsabilidades de Controlador y de Modelo}{figure.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Segunda iteración: diseño final en C\#}{8}{subsection.3.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Arquitectura general: dos programas independientes que comparten únicamente el código de bajo nivel del protocolo a través de \texttt  {chatComun}.}}{8}{figure.2}\protected@file@percent }
+\newlabel{fig:arquitectura-general}{{2}{8}{Arquitectura general: dos programas independientes que comparten únicamente el código de bajo nivel del protocolo a través de \texttt {chatComun}}{figure.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Servidor en C\#: \texttt  {Servidor} concentra toda la lógica de negocio y la sincronización con un único candado; \texttt  {ClienteHandler} es un controlador delgado, uno por conexión, que solo traduce JSON en llamadas al Modelo. \texttt  {Usuario} y \texttt  {Sala} ya no intentan actuar como servidores por su cuenta: toda la membresía se resuelve de forma centralizada, corrigiendo el problema señalado en la figura~\ref {fig:diagrama-c}.}}{9}{figure.3}\protected@file@percent }
+\newlabel{fig:diagrama-servidor-cs}{{3}{9}{Servidor en C\#: \texttt {Servidor} concentra toda la lógica de negocio y la sincronización con un único candado; \texttt {ClienteHandler} es un controlador delgado, uno por conexión, que solo traduce JSON en llamadas al Modelo. \texttt {Usuario} y \texttt {Sala} ya no intentan actuar como servidores por su cuenta: toda la membresía se resuelve de forma centralizada, corrigiendo el problema señalado en la figura~\ref {fig:diagrama-c}}{figure.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Cliente en C\#: \texttt  {Networking} es la clase dedicada exclusivamente a la conexión TCP; \texttt  {MensajeProtocolo} construye cada mensaje del protocolo y lo envía a través de \texttt  {Networking}; \texttt  {ControladorChat} conecta ambas con el Modelo (\texttt  {EstadoAplicacion}) y la Vista.}}{10}{figure.4}\protected@file@percent }
+\newlabel{fig:diagrama-cliente-cs}{{4}{10}{Cliente en C\#: \texttt {Networking} es la clase dedicada exclusivamente a la conexión TCP; \texttt {MensajeProtocolo} construye cada mensaje del protocolo y lo envía a través de \texttt {Networking}; \texttt {ControladorChat} conecta ambas con el Modelo (\texttt {EstadoAplicacion}) y la Vista}{figure.4}{}}
+\gdef \LT@ii {\LT@entry 
+    {1}{71.44142pt}\LT@entry 
+    {1}{159.95424pt}\LT@entry 
+    {1}{162.49014pt}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Al identificarse, el servidor responde solo a quien lo pidió, pero además difunde \texttt  {NEW\_USER} a todos los demás clientes ya conectados, cada uno en su propio hilo; el candado global garantiza que ninguna otra identificación concurrente vea la tabla de usuarios a medio actualizar.}}{11}{figure.5}\protected@file@percent }
+\newlabel{fig:secuencia-identify}{{5}{11}{Al identificarse, el servidor responde solo a quien lo pidió, pero además difunde \texttt {NEW\_USER} a todos los demás clientes ya conectados, cada uno en su propio hilo; el candado global garantiza que ninguna otra identificación concurrente vea la tabla de usuarios a medio actualizar}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Trazabilidad protocolo -- código}{11}{subsection.3.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{Cada operación del protocolo tiene un único método responsable en el Modelo; el Controlador nunca decide reglas de negocio por su cuenta, corrigiendo así el problema de diseño de \texttt  {conexionHandler} en la primera iteración.}}{11}{table.2}\protected@file@percent }
+\newlabel{tab:trazabilidad}{{2}{11}{Cada operación del protocolo tiene un único método responsable en el Modelo; el Controlador nunca decide reglas de negocio por su cuenta, corrigiendo así el problema de diseño de \texttt {conexionHandler} en la primera iteración}{table.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Implementación}{12}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Tecnologías utilizadas}{12}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Requisitos para ejecutar el proyecto}{12}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Instrucciones de compilación y ejecución}{12}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Estado de las pruebas}{12}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusiones}{13}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Bibliografía}{14}{section.6}\protected@file@percent }
+\gdef \@abspage@last{14}

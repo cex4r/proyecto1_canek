@@ -1,0 +1,20 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Resumen}{2}{section.1}%
+\contentsline {section}{\numberline {2}Introducción}{2}{section.2}%
+\contentsline {section}{\numberline {3}Análisis y diseño}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}El protocolo como punto de partida}{4}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Decisiones de arquitectura y alternativas consideradas}{5}{subsection.3.2}%
+\contentsline {paragraph}{Cliente-servidor con un hilo por conexión.}{5}{subsection.3.2}%
+\contentsline {paragraph}{Un único candado global en el servidor.}{5}{subsection.3.2}%
+\contentsline {paragraph}{MVC en ambos programas.}{5}{subsection.3.2}%
+\contentsline {paragraph}{\texttt {System.Text.Json}.}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Primera iteración: la versión en C}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Segunda iteración: diseño final en C\#}{8}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Trazabilidad protocolo -- código}{11}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Implementación}{12}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Tecnologías utilizadas}{12}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Requisitos para ejecutar el proyecto}{12}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Instrucciones de compilación y ejecución}{12}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Estado de las pruebas}{12}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Conclusiones}{13}{section.5}%
+\contentsline {section}{\numberline {6}Bibliografía}{14}{section.6}%
