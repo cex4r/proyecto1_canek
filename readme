@@ -1,0 +1,136 @@
+# Chat multi-cliente (C#)
+
+Implementación completa del protocolo en `Protocolo.md`, dividida en dos
+programas independientes (servidor y cliente) más una biblioteca de código
+compartido, cada uno siguiendo el patrón **MVC**.
+
+```
+ChatMulti/
+├── ChatMulti.sln
+├── Chat.Comun/            biblioteca compartida (ver abajo)
+│   ├── BufferLineas.cs
+│   ├── SerializadorJson.cs
+│   └── EstadoUsuario.cs
+├── ChatServer/
+│   ├── Modelo/
+│   │   ├── Usuario.cs
+│   │   ├── Sala.cs
+│   │   └── Servidor.cs
+│   ├── Controlador/
+│   │   └── ClienteHandler.cs
+│   ├── Vista/
+│   │   └── VistaConsola.cs
+│   └── Program.cs
+└── ChatClient/
+    ├── Modelo/
+    │   ├── EstadoAplicacion.cs
+    │   └── SalaCliente.cs
+    ├── Controlador/
+    │   ├── Networking.cs
+    │   ├── MensajeProtocolo.cs
+    │   └── ControladorChat.cs
+    ├── Vista/
+    │   └── VistaConsola.cs
+    └── Program.cs
+```
+
+## Por qué un tercer proyecto (`Chat.Comun`)
+
+Tanto el servidor como el cliente necesitan exactamente la misma lógica de
+bajo nivel para hablar el protocolo: separar mensajes por `\n` sobre un
+`NetworkStream` (`BufferLineas`) y serializar/parsear JSON de la misma
+manera (`SerializadorJson`, y el enum `EstadoUsuario`). En vez de duplicar
+ese código en ambos lados (como pediste inicialmente con una clase
+`buffer_lineas` en el servidor), se extrajo a una biblioteca de clases
+compartida que ambos proyectos referencian. La lógica de negocio y el
+manejo de sockets por cliente (`ClienteHandler`, en el **Controlador** del
+servidor) sigue siendo exclusiva del servidor, y el networking del cliente
+(`Networking`, `MensajeProtocolo`) exclusiva del cliente — así que la
+separación cliente/servidor que pediste se mantiene intacta; solo el
+"plomero" común vive en un solo lugar.
+
+## Librería de JSON usada
+
+**`System.Text.Json`**, la que trae el propio runtime de .NET (no se
+agregó ningún paquete NuGet). Se usa de dos formas:
+
+- Serialización de objetos anónimos (`JsonSerializer.Serialize`) para
+  construir cada mensaje saliente — así el "shape" del JSON queda definido
+  con la sintaxis de objeto de C# en el propio código que arma el mensaje.
+- El modelo dinámico `JsonNode`/`JsonObject` para leer los mensajes
+  entrantes, ya que su forma depende del campo `"type"` y no conviene
+  atarlos a una sola clase fuertemente tipada por cada variante de mensaje.
+
+## MVC en el servidor
+
+- **Modelo** (`Usuario`, `Sala`, `Servidor`): todo el estado compartido y
+  las reglas de negocio del protocolo (identificación, salas, invitaciones,
+  etc.). `Servidor` es la raíz de agregado: un solo `lock` protege las
+  tablas de usuarios y salas para que las operaciones sean atómicas incluso
+  con muchos clientes concurrentes. También es quien decide, para cada
+  operación, a quién más hay que notificarle (por ejemplo `NEW_USER`,
+  `JOINED_ROOM`), escribiéndole directamente a través de `Usuario.Enviar`.
+- **Controlador** (`ClienteHandler`): un objeto por conexión aceptada, que
+  corre en su propio hilo. Lee líneas con `BufferLineas`, las interpreta
+  como JSON, llama al método del `Servidor` que corresponda según el
+  `"type"`, y le responde al cliente que originó la petición según lo que
+  el protocolo indica para cada `RESPONSE`.
+- **Vista** (`VistaConsola`): el servidor no tiene entrada interactiva; su
+  vista es solo una bitácora en consola de conexiones y desconexiones.
+
+`Program.cs` abre el `TcpListener`, y por cada conexión aceptada lanza un
+`Thread` nuevo dedicado a esa conexión (`ClienteHandler.Atender`) — así el
+servidor atiende a todos los clientes en paralelo.
+
+## MVC en el cliente
+
+- **Modelo** (`EstadoAplicacion`, `SalaCliente`): lo que este cliente sabe
+  del mundo (su propio nombre y estado, los usuarios que conoce, las salas
+  a las que se ha unido). No sabe nada de sockets ni de JSON.
+- **Controlador**:
+  - `Networking`: la clase de networking pedida — abre la conexión TCP,
+    manda líneas de forma segura para varios hilos, y corre un hilo lector
+    en segundo plano que entrega cada mensaje entrante ya parseado.
+  - `MensajeProtocolo`: la clase pedida para mandar mensajes al servidor —
+    conoce la forma exacta de cada mensaje del protocolo (`IDENTIFY`,
+    `TEXT`, `ROOM_TEXT`, etc.) y los envía a través de `Networking`.
+  - `ControladorChat`: conecta las tres capas — recibe los eventos de
+    `Networking`, actualiza el `EstadoAplicacion` y le pide a la vista que
+    muestre algo; y recibe los comandos que la vista reconoce del usuario
+    para traducirlos en llamadas a `MensajeProtocolo`.
+- **Vista** (`VistaConsola`): lee comandos de consola (`/status`, `/users`,
+  `/msg`, `/newroom`, `/invite`, `/join`, `/roomusers`, `/roomtext`,
+  `/leave`, `/quit`, o texto suelto para mensaje público) e imprime lo que
+  va ocurriendo en el chat.
+
+## Compilar y ejecutar
+
+Requiere el SDK de **.NET 8**.
+
+```bash
+# Desde la carpeta ChatMulti/
+dotnet build ChatMulti.sln
+
+# Terminal 1: servidor (puerto opcional, por defecto 5000)
+dotnet run --project ChatServer -- 5000
+
+# Terminal 2, 3, ...: uno o más clientes
+dotnet run --project ChatClient
+```
+
+El cliente pregunta host, puerto y nombre de usuario de forma interactiva
+al arrancar.
+
+## Notas / cosas a completar según se necesite
+
+- No se implementaron pruebas unitarias todavía (se puede agregar un
+  proyecto `Chat.Comun.Tests` y `ChatServer.Tests` con xUnit, apoyándose en
+  que `Servidor` y `EstadoAplicacion` no dependen de sockets reales y se
+  pueden probar directamente).
+- El servidor no valida el `UTF-8` de forma explícita más allá de lo que ya
+  garantiza `Encoding.UTF8.GetString`; tampoco hay límite de tamaño de
+  mensaje, algo razonable de agregar si se quiere ser robusto ante clientes
+  maliciosos.
+- La vista del cliente es de consola; se podría sustituir por una interfaz
+  gráfica (WPF/WinForms/Avalonia) sin tocar Modelo ni Controlador, que es
+  justo la ventaja de haber seguido MVC.
